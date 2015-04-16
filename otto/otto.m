@@ -21,7 +21,7 @@ scvwrite('cluster.csv', cluster, ',')
 distance = zeros(length(test),K);
 for i=1:K
     for j=1:L
-        distance(:,i) = distance(:,i) + (test(:,j) - centroids(i,j)) .^ 2;
+        distance(:,i) = distance(:,i) + (test(:,j) - centers(i,j)) .^ 2;
     end
 end
 
@@ -29,4 +29,10 @@ end
 [tmp idx] = min(distance');
 idx = idx';
 
-scvwrite('results.csv', idx, ',')
+scvwrite('centers.csv', idx, ',')
+
+results = zeros(length(idx));
+for i=1:length(idx)
+        results(i) = map(idx(i));
+end
+scvwrite('results.csv', results, ',')
