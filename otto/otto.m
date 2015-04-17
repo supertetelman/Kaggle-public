@@ -2,20 +2,23 @@
 pkg load statistics
 
 %Read data in 
-train = csvread('test.csv')
-%test = csvread('test.csv')
-%train = csvread('tiny.train.csv');
-test = csvread('tiny.cv.csv');
+train = csvread('train.csv')
+test = csvread('test.csv')
+
+%[ mytrain cv mytest ] = makedata(train, .6, .2, .2, false);
+
+%%%This guy is used to have a smaller test set%%%
+[ mytrain cv mytest ] = makedata(train, .05, .01, .01, true);
 
 %Initialize params
-[m n] = size(test);
+[m n] = size(mytest);
 ksize=2;
 map = zeros(ksize);
 
 %Train kmeans centers
-[idx, centers] = kmeans(train,ksize);
+[idx, centers] = kmeans(mytrain,ksize);
 for i=1:ksize
-	map(i) = mode(train(idx == i, 95)); %Create map the most popular classnum of each cluster to the clusternum
+	map(i) = mode(mytrain(idx == i, 95)); %Create map the most popular classnum of each cluster to the clusternum
 end
 
 cluster = [ map centers];
@@ -26,7 +29,7 @@ csvwrite('cluster.csv', cluster)
 distance = zeros(m,K);
 for i=1:K
     for j=1:L
-        distance(:,i) = distance(:,i) + (test(:,j) - centers(i,j)) .^ 2;
+        distance(:,i) = distance(:,i) + (mytest(:,j) - centers(i,j)) .^ 2;
     end
 end
 
@@ -36,8 +39,8 @@ idx = idx';
 
 csvwrite('test_centers.csv', idx)
 
-results = zeros(length(idx));
+%results = zeros(length(idx));
 for i=1:length(idx)
-	results(i) = map(idx(i));
+	idx(i) = map(idx(i));
 end
-csvwrite('results.csv', results)
+csvwrite('results.csv',[ mytest(:,1) idx ])
