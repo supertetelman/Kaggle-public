@@ -20,6 +20,7 @@ map = zeros(ksize);
 
 %Run with ore clusters until each cluster is consistent enough
 while true
+%Train and get accuracy
 	map = zeros(ksize);
 	%Train kmeans centers until the mode makes up X% of each cluster
 	[predict, centers, map] = runkmeans(mytrain,ksize);
@@ -40,24 +41,9 @@ while true
 		disp(['Using ' num2str(ksize) 'clusters'])
 		break
 	end
-	ksize = ksize + 1;
 
-	%assign test data to clusters
-	[K L] = size(centers);
-	distance = zeros(m,K);
-	for i=1:K
-	    for j=1:L
-        	distance(:,i) = distance(:,i) + (mytest(:,j) - centers(i,j)) .^ 2;
-	    end
-	end
-
-	%TODO: this seems inefficient
-	[tmp idx] = min(distance');
-	idx = idx';
-
-	csvwrite([ num2str(ksize) 'test_centers.csv'], idx)
-
-	%results = zeros(length(idx));
+%predict and get accuracy
+	idx = assign_cluster(mytest, centers);
 	m=length(idx)
 	for i=1:m
 		idx(i) = map(idx(i));
@@ -67,6 +53,7 @@ while true
 	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
 
 
+	ksize = ksize + 1;
 end
 
 %TODO:
