@@ -5,16 +5,16 @@ pkg load statistics
 train = csvread('train.csv');
 test = csvread('test.csv');
 
-%[ mytrain cv mytest ] = makedata(train, .6, .2, .2, false);
+[ mytrain cv mytest ] = makedata(train, .6, .2, .2, true);
 
 %%%This guy is used to have a smaller test set%%%
-[ mytrain cv mytest ] = makedata(train, .005, .01, .01, true);
+%[ mytrain cv mytest ] = makedata(train, .005, .01, .01, true);
 
 %Initialize params
 [m n] = size(mytest);
-ksize=2;
+ksize=4;
 kiter=100;
-occurence=.95
+occurence=.9
 map = zeros(ksize);
 
 
@@ -26,7 +26,7 @@ while true
 	%mytrain = [ mytrain idx ]; %add predictions tdo training data set
 	csvwrite([num2str(ksize)  'cluster.csv' ], [ map' centers ])
 
-	accuracy = 0
+	accuracy = 0;
 	for i=1:ksize
 		cluster_i = (predict(:,end) == i);
 		kmode = mode(mytrain(cluster_i, end));
@@ -41,33 +41,33 @@ while true
 		break
 	end
 	ksize = ksize + 1;
+
+	%assign test data to clusters
+	[K L] = size(centers);
+	distance = zeros(m,K);
+	for i=1:K
+	    for j=1:L
+        	distance(:,i) = distance(:,i) + (mytest(:,j) - centers(i,j)) .^ 2;
+	    end
+	end
+
+	%TODO: this seems inefficient
+	[tmp idx] = min(distance');
+	idx = idx';
+
+	csvwrite([ num2str(ksize) 'test_centers.csv'], idx)
+
+	%results = zeros(length(idx));
+	m=length(idx)
+	for i=1:m
+		idx(i) = map(idx(i));
+	end
+	csvwrite([num2str(ksize) 'results.csv'],[ mytest(:,1) idx ])
+	accuracy = sum(idx == mytest(:,end))/m;
+	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
+
+
 end
-
-%assign test data to clusters
-[K L] = size(centers);
-distance = zeros(m,K);
-for i=1:K
-    for j=1:L
-        distance(:,i) = distance(:,i) + (mytest(:,j) - centers(i,j)) .^ 2;
-    end
-end
-
-%TODO: this seems inefficient
-[tmp idx] = min(distance');
-idx = idx';
-
-csvwrite('test_centers.csv', idx)
-
-%results = zeros(length(idx));
-m=length(idx)
-for i=1:m
-	idx(i) = map(idx(i));
-end
-csvwrite('results.csv',[ mytest(:,1) idx ])
-accuracy = sum(idx == mytest(:,end))/m;
-disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
-
-
 
 %TODO:
 %tune a accuracy for the clusters
