@@ -2,19 +2,19 @@
 pkg load statistics
 
 %Debug
-debug = 1;
+debug = 0;
 debug_sol = 1;
 kmeans = 1;
-logistic = 0;
+logistic = 1;
 
 classifiers = 9;
 
 %Tunable params
-lambda = 100;
-epsilon = .8;
-k_iters = 100;
-log_iters = 10;
-min_clusters = 9;
+lambda = 10;
+epsilon = .9;
+k_iters = 500;
+log_iters = 1000;
+min_clusters = 4;
 
 
 %Read data in 
@@ -50,25 +50,26 @@ if kmeans
 	disp('Running Kmeans clustering')
 	[ map centers predict_train predict_cv predict_test] = all_kmeans(mytrain, cv, mytest, epsilon, min_clusters, k_iters);
 	[ accuracy predict mapped ] = assess_kmeans(test, unknown, centers, map);
-	k_solution = [test(:,1) mapped];
-	csvwrite([num2str(length(centers)) '.solution.results.kmeans.csv'],[ k_solution ])
+	solution = [test(:,1) mapped];
+	csvwrite([num2str(length(centers)) '.solution.results.kmeans.csv'],[ solution ])
 end
 
 if (logistic && kmeans)
 	disp('Running logistic regression (post Kmeans clustering)')
+	solution = [];
 	for i=1:size(centers,1) %Run a sepperate regression against each cluster
 		[ theta predict_train predict_cv predict_test ] = all_logistic(mytrain(predict_train == i,:), cv(predict_cv == i, :), mytest(predict_test == i,:), lambda, log_iters, map, classifiers);
 		[m2 n2] = size(test(predict == i,:));
-		solution = [solution; log_predict(theta,[ones(m2,1) test(predict == i,2:end-1)], classifiers)];
-		csvwrite([num2str(i) '.solution.results.logistic.csv'], [test(predict == i,1) solution ])
+		solution = [solution; [ test(predict == i, 1)  log_predict(theta,[ones(m2,1) test(predict == i,2:end-1)], classifiers)]  ];
+		csvwrite([num2str(i) '.solution.results.logistic.csv'], [solution ])
 	end
 end
 
 %Format output properly
 all_solution = zeros(m,classifiers+1);
-all_solution(:,1) = test(:,1);
+all_solution(:,1) = solution(:,1);
 for i=1:classifiers
-	all_solution(:,i) = (solution == i);
+	all_solution(:,i) = (solution(:,2) == i);
 end
 %TODO Add header
 csvwrite('all.solution.results.logistic.csv', [all_solution ])

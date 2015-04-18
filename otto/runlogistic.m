@@ -15,7 +15,7 @@ for i=1:classifiers
 	[theta, cost] = fminunc(@(t)(logisticCostFunction(t, X, (y ==i), lambda)), initial_theta, options);
 	all_theta(:,i) = theta;
 end
-theta = all_theta
+theta = all_theta;
 predict = log_predict(theta, X, classifiers);
 
 end
