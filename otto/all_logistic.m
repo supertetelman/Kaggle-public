@@ -18,7 +18,8 @@ disp(['TRAIN RESULTS: Logistic regrestion found an accuracy of ' num2str(train_a
 disp(['CV RESULTS: Logistic regrestion found an accuracy of ' num2str(cv_accuracy) ' percent'])
 disp(['TEST RESULTS: Logistic regrestion found an accuracy of ' num2str(test_accuracy) ' percent'])
 
-csvwrite('train.results.logistic.csv',[ mytrain(:,1) predict_train ])
-csvwrite('cv.results.logistic.csv',[ cv(:,1) predict_cv ])
-csvwrite('test.results.logistic.csv',[ mytest(:,1) predict_test ])
+csvwrite([num2str(lambda) '.theta.logistic.csv'],[ mytrain(:,1) predict_train ])
+csvwrite([num2str(lambda) '.train.results.logistic.csv'],[ mytrain(:,1) predict_train ])
+csvwrite([num2str(lambda) '.cv.results.logistic.csv'],[ cv(:,1) predict_cv ])
+csvwrite([num2str(lambda) '.test.results.logistic.csv'],[ mytest(:,1) predict_test ])
 end

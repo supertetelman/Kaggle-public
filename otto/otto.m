@@ -6,12 +6,16 @@ debug = 0;
 debug_sol = 1;
 kmeans = 1;
 logistic = 1;
+only_logistic = 1;
+read_log_in = 0;
+read_k_in = 0;
 
+%constants
 classifiers = 9;
 
 %Tunable params
 lambda = 10;
-epsilon = .9;
+epsilon = .75;
 k_iters = 500;
 log_iters = 1000;
 min_clusters = 4;
@@ -29,19 +33,28 @@ end
 if debug_sol == 0
 	disp('Using real test set')
 	test = csvread('test.csv');
+	unknown = 0;
 else
 	disp('Using debug test set')
 	test = mytest;
 end
 
 [m n] = size(test);
-unknown = zeros(m);
 
-if logistic
+if read_log_in
+	theta = csvread([num2str(lambda) '.theta.logistic.csv']);
+end
+
+if read_k_in
+	k_csv = csvread([num2str(ksize)  '.centers.kmeans.csv']);
+	centers = k_csv(:,2:end);
+	map = k_csv(:,1);
+end
+
+if only_logistic
 	disp('Running logistic regression')
 	map = 0;
 	[ theta predict_train predict_cv predict_test ] = all_logistic(mytrain, cv, mytest, lambda, log_iters, map, classifiers);
-	[m n] = size(test);
 	solution = log_predict(theta,[ones(m,1) test(:,2:end-1)], classifiers);
 	csvwrite('solution.results.logistic.csv', [test(:,1) solution ])
 end
