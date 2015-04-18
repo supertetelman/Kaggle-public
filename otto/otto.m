@@ -2,23 +2,23 @@
 pkg load statistics
 
 %Debug
-debug = 0;
-debug_sol = 1;
-kmeans = 1;
-logistic = 1;
-only_logistic = 1;
-read_log_in = 0;
-read_k_in = 0;
+debug = 0
+debug_sol = 1
+kmeans = 1
+logistic = 1
+only_logistic = 1
+read_log_in = 0
+read_k_in = 0
 
 %constants
 classifiers = 9;
 
 %Tunable params
-lambda = 10;
-epsilon = .75;
-k_iters = 500;
-log_iters = 1000;
-min_clusters = 4;
+lambda = 10
+epsilon = .75
+k_iters = 500
+log_iters = 1000
+min_clusters = 4
 
 
 %Read data in 
