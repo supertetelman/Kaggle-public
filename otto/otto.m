@@ -1,16 +1,18 @@
 %load reqs
 pkg load statistics
 
-kmeans = 1;
+debug = 1;
+debug_sol = 1;
+
+kmeans = 0;
 logistic = 1;
+
 classifiers = 9;
 lambda = 0;
 epsilon = .8;
 k_iters = 400;
-log_iters = 50;
+log_iters = 5;
 min_clusters = 9;
-debug = 1;
-debug_sol = 1;
 
 
 %Read data in 
@@ -40,28 +42,10 @@ end
 
 if logistic
 	map = 0;
-	[ theta predict ]  =  runlogistic(mytrain, cv, mytest, lambda, map, classifiers, log_iters);
-
-[m n] = size(mytrain);
-train_predict = log_predict(theta,[ones(m,1) mytrain(:,2:end-1)], classifiers);
-train_accuracy = sum(train_predict == mytrain(:,end))/m;
-[m n] = size(cv);
-cv_predict = log_predict(theta,[ones(m,1) cv(:,2:end-1)], classifiers);
-cv_accuracy = sum(cv_predict == cv(:,end))/m;
-[m n] = size(mytest);
-test_predict = log_predict(theta,[ones(m,1) mytest(:,2:end-1)], classifiers);
-test_accuracy = sum(test_predict == mytest(:,end))/m;
-[m n] = size(test);
-solution = log_predict(theta,[ones(m,1) test(:,2:end-1)], classifiers);
-
-disp(['TRAIN RESULTS: Logistic regrestion found an accuracy of ' num2str(train_accuracy) ' percent'])
-disp(['CV RESULTS: Logistic regrestion found an accuracy of ' num2str(cv_accuracy) ' percent'])
-disp(['TEST RESULTS: Logistic regrestion found an accuracy of ' num2str(test_accuracy) ' percent'])
-
-csvwrite('train.results.logistic.csv',[ mytrain(:,1) train_predict ])
-csvwrite('cv.results.logistic.csv',[ cv(:,1) cv_predict ])
-csvwrite('test.results.logistic.csv',[ mytest(:,1) test_predict ])
-csvwrite('solution.results.logistic.csv', [test(:,1) solution ])
+	[ theta predict_train predict_cv predict_test ] = all_logistic(mytrain, cv, mytest, lambda, log_iters, map, classifiers);
+	[m n] = size(test);
+	solution = log_predict(theta,[ones(m,1) test(:,2:end-1)], classifiers);
+	csvwrite('solution.results.logistic.csv', [test(:,1) solution ])
 end
 %TODO:
 %tune a accuracy for the clusters
