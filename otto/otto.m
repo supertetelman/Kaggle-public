@@ -48,7 +48,7 @@ if kmeans
 	csvwrite([num2str(length(centers)) '.solution.results.kmeans.csv'],[ k_solution ])
 end
 
-if logistic and kmeans
+if (logistic && kmeans)
 	[ theta predict_train predict_cv predict_test ] = all_logistic(mytrain, cv, mytest, lambda, log_iters, map, classifiers);
 	[m n] = size(test);
 	solution = log_predict(theta,[ones(m,1) test(:,2:end-1)], classifiers);
