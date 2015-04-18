@@ -1,4 +1,6 @@
 function [idx] = assign_cluster(data, centers)
+size(data)
+size(centers)
 
 %assign test data to clusters
 [m n] = size(data);

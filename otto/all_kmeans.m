@@ -14,7 +14,7 @@ while true
 %Train and get accuracy
 	map = zeros(ksize);
 	%Train kmeans centers until the mode makes up X% of each cluster
-	[predict_train, centers, map] = runkmeans(mytrain(:,2:end-1), ksize, kiter);
+	[predict_train, centers, map] = runkmeans(mytrain(:,2:end-1),  mytrain(:,end), ksize, kiter);
 
 	accuracy = 0;
 	for i=1:ksize

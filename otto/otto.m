@@ -14,7 +14,7 @@ lambda = 100;
 epsilon = .8;
 k_iters = 100;
 log_iters = 10;
-min_clusters = 4;
+min_clusters = 9;
 
 
 %Read data in 
