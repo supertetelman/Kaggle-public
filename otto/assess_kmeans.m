@@ -3,8 +3,6 @@ function [ accuracy predict mapped ] = assess_kmeans(data, y, centers, map)
         predict = assign_cluster(data, centers);
         mapped = predict;
         m=length(predict);
-        for i=1:m
-                mapped(i) = map(mapped(i));
-        end
-        accuracy = sum(predict == y)/m;
+        mapped = map(predict);
+        accuracy = sum(mapped == y)/m;
 end

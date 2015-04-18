@@ -3,9 +3,8 @@ function predictions = log_predict(theta, X, classifiers)
 m = size(X, 1); % Number of training examples
 
 all_predictions = zeros(m,classifiers); % will contain a percentage match for each classifier/row
-
 for i=1:classifiers
-	all_predictions(:,i) = sigmoid(X*theta); %Calculate cost for all values
+	all_predictions(:,i) = sigmoid(X*theta(:,i)); %Calculate cost for all values
 end
 
 
