@@ -1,19 +1,20 @@
+%This function will pass in only the raw data into all the other functions it calls, parsing out the ID and y(x) value
+
 function [ map centers predict_train predict_cv predict_test] = all_kmeans(mytrain, cv, mytest, epsilon, min_ksize, kiter)
 
 %Initialize params
 [m n] = size(mytest);
 ksize=min_ksize;
-kiter; %TODO
-occurence=epsilon
+kiter; 
+occurence=epsilon;
 map = zeros(ksize);
-
 
 %Run with ore clusters until each cluster is consistent enough
 while true
 %Train and get accuracy
 	map = zeros(ksize);
 	%Train kmeans centers until the mode makes up X% of each cluster
-	[predict_train, centers, map] = runkmeans(mytrain,ksize);
+	[predict_train, centers, map] = runkmeans(mytrain(:,2:end-1), ksize, kiter);
 
 	accuracy = 0;
 	for i=1:ksize
@@ -24,29 +25,17 @@ while true
 		accuracy = accuracy + accurate/total;
 	end
 
-	disp(['TRAIN SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy/ksize) ' in the test set'])
+	disp(['TRAIN SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy/ksize) ' in the train set'])
 	if accuracy/ksize > occurence
-		disp(['Using ' num2str(ksize) 'clusters the mode classifier made up an average of ' num2str(occurenc) ' % of the total values for each cluster'])
+		disp(['K_MEANS TRAINING COMPLETE: Using ' num2str(ksize) ' clusters the mode classifier made up an average of ' num2str(occurence) ' % of the total values for each cluster'])
 		break
 	end
 
 %predict and get accuracy
-	predict_test = assign_cluster(mytest, centers);
-	assign_test = predict_test;
-	m=length(predict_test);
-	for i=1:m
-		assign_test(i) = map(assign_test(i));
-	end
-	accuracy = sum(predict_test == mytest(:,end))/m;
-	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
+	[ accuracy predict_test assign_test ] = assess_kmeans(mytest(:,2:end-1), mytest(:,end), centers, map);
+	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the cv set'])
 
-	predict_cv = assign_cluster(cv, centers);
-	assign_cv = predict_cv;
-	m=length(predict_cv);
-	for i=1:m
-		assign_cv(i) = map(assign_cv(i));
-	end
-	accuracy = sum(predict_cv == cv(:,end))/m;
+	[ accuracy predict_cv assign_cv ] = assess_kmeans(cv(:,2:end-1), cv(:,end), centers, map);
 	disp(['CV SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
 
 	csvwrite([num2str(ksize)  '.centers.kmeans.csv' ], [ map' centers ])
