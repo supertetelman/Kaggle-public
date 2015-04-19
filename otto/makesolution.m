@@ -28,7 +28,7 @@ if only_logistic
 	solution = log_predict(theta,[1 test(row,2:end-1)], classifiers);
 	dlmwrite('solution.results.logistic.csv', [test(row,1) (solution == 1:classifiers) ],'-append')
 end
-if kmeans
+if  kmeans
 	[ accuracy predict mapped ] = assess_kmeans(test(row,2:end-1), -1, centers, map);
 	dlmwrite([num2str(length(centers)) '.solution.results.kmeans.csv'],[ test(row,1) (mapped == 1:classifiers) ], '-append')
 end

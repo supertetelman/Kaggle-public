@@ -4,23 +4,26 @@ pkg load statistics
 %Debug
 debug = 0
 debug_sol = 0
-do_train = 1
+debug_read_sol = 0
 kmeans = 1
 logistic = 1
 only_logistic = 1
-read_log_in = 0 
+
+do_train = 0
+
+read_log_in = 0
 read_k_in = 0
-ksize = 5
+ksize = 9
 
 %constants
 classifiers = 9;
 
 %Tunable params
-lambda = 5
-epsilon = .7
+lambda = 1
+epsilon = .9
 k_iters = 500
 log_iters = 500
-min_clusters = 9
+min_clusters = 50
 
 %Initialize things so they are not null depending on debug/training
 map = 0; all_theta = 0; theta = 0; centers = 0;
@@ -33,6 +36,11 @@ if debug == 0
 else
 	disp('Using debug dataset')
 	[ mytrain cv mytest ] = makedata(train, .2, .1, .1, true);
+	if debug_read_sol
+		mytrain=mytrain(1:1000,:);
+		cv=cv(1:100,:);
+		mytest=mytest(1:100,:);
+	end
 end
 if debug_sol == 0
 	disp('Using real test set')
@@ -40,7 +48,7 @@ if debug_sol == 0
 	unknown = 0;
 else
 	disp('Using debug test set')
-	test = mytest(1:1000,:);
+	test = mytest;
 end
 
 [m n] = size(test);
@@ -51,9 +59,8 @@ if read_log_in
 end
 
 if read_k_in
-	k_csv = csvread([num2str(ksize)  '.centers.kmeans.csv']);
-	centers = k_csv(:,classifiers+1:end);
-	map = k_csv(1,1:classifiers);
+	centers = csvread([num2str(ksize)  '.centers.kmeans.csv']);
+	map = csvread([num2str(ksize)  '.map.kmeans.csv']);
 end
 
 if (only_logistic && do_train)

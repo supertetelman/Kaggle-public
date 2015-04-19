@@ -33,7 +33,8 @@ while true
 	[ cv_accuracy predict_cv assign_cv ] = assess_kmeans(cv(:,2:end-1), cv(:,end), centers, map);
 	disp(['CV SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(cv_accuracy) ' in the test set'])
 
-	csvwrite([num2str(ksize)  '.centers.kmeans.csv' ], [ map' centers ])
+	csvwrite([num2str(ksize)  '.centers.kmeans.csv' ], [ centers ])
+	csvwrite([num2str(ksize)  '.map.kmeans.csv' ], [ map' ])
 	csvwrite([num2str(ksize) '.train.results.kmeans.csv'],[ mytrain(:,1) predict_train ])
 	csvwrite([num2str(ksize) '.test.results.kmeans.csv'],[ mytest(:,1) predict_test ])
 	csvwrite([num2str(ksize) '.cv.results.kmeans.csv'],[ cv(:,1) predict_cv ])
