@@ -9,14 +9,9 @@ kmeans = 1
 logistic = 1
 only_logistic = 1
 
-do_train = 0
-
+do_train = 1
 read_log_in = 0
 read_k_in = 0
-ksize = 9
-
-%constants
-classifiers = 9;
 
 %Tunable params
 lambda = 1
@@ -24,6 +19,10 @@ epsilon = .9
 k_iters = 500
 log_iters = 500
 min_clusters = 50
+
+%constants
+classifiers = 9;
+ksize = min_clusters
 
 %Initialize things so they are not null depending on debug/training
 map = 0; all_theta = 0; theta = 0; centers = 0;
@@ -53,12 +52,12 @@ end
 
 [m n] = size(test);
 
-if read_log_in
+if  (read_log_in && ~do_train)
 	theta = csvread([num2str(lambda) '.simple.theta.logistic.csv']);
 	all_theta = csvread([num2str(lambda) '.full.theta.logistic.csv']);
 end
 
-if read_k_in
+if (read_k_in && ~do_train)
 	centers = csvread([num2str(ksize)  '.centers.kmeans.csv']);
 	map = csvread([num2str(ksize)  '.map.kmeans.csv']);
 end
