@@ -26,21 +26,22 @@ while true
 	end
 
 	disp(['TRAIN SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy/ksize) ' in the train set'])
-	if accuracy/ksize > occurence
-		disp(['K_MEANS TRAINING COMPLETE: Using ' num2str(ksize) ' clusters the mode classifier made up an average of ' num2str(occurence) ' % of the total values for each cluster'])
-		break
-	end
-
 %predict and get accuracy
-	[ accuracy predict_test assign_test ] = assess_kmeans(mytest(:,2:end-1), mytest(:,end), centers, map);
-	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the cv set'])
+	[ test_accuracy predict_test assign_test ] = assess_kmeans(mytest(:,2:end-1), mytest(:,end), centers, map);
+	disp(['TEST SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(test_accuracy) ' in the cv set'])
 
-	[ accuracy predict_cv assign_cv ] = assess_kmeans(cv(:,2:end-1), cv(:,end), centers, map);
-	disp(['CV SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(accuracy) ' in the test set'])
+	[ cv_accuracy predict_cv assign_cv ] = assess_kmeans(cv(:,2:end-1), cv(:,end), centers, map);
+	disp(['CV SET RESULTS: With ' num2str(ksize) ' clusters we had an accuracy of ' num2str(cv_accuracy) ' in the test set'])
 
 	csvwrite([num2str(ksize)  '.centers.kmeans.csv' ], [ map' centers ])
 	csvwrite([num2str(ksize) '.train.results.kmeans.csv'],[ mytrain(:,1) predict_train ])
 	csvwrite([num2str(ksize) '.test.results.kmeans.csv'],[ mytest(:,1) predict_test ])
 	csvwrite([num2str(ksize) '.cv.results.kmeans.csv'],[ cv(:,1) predict_cv ])
+
+	if accuracy/ksize > occurence
+		disp(['K_MEANS TRAINING COMPLETE: Using ' num2str(ksize) ' clusters the mode classifier made up an average of ' num2str(occurence) ' % of the total values for each cluster'])
+		break
+	end
+
 	ksize = ksize + 1;
 end

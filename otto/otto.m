@@ -2,24 +2,24 @@
 pkg load statistics
 
 %Debug
-debug = 1
-debug_sol = 1
-do_train = 0
+debug = 0
+debug_sol = 0
+do_train = 1
 kmeans = 1
 logistic = 1
 only_logistic = 1
-read_log_in = 1
-read_k_in = 1
-ksize = 9
+read_log_in = 0 
+read_k_in = 0
+ksize = 5
 
 %constants
 classifiers = 9;
 
 %Tunable params
-lambda = 0
-epsilon = .6
-k_iters = 100
-log_iters = 10
+lambda = 5
+epsilon = .7
+k_iters = 500
+log_iters = 500
 min_clusters = 9
 
 %Initialize things so they are not null depending on debug/training
@@ -29,7 +29,7 @@ map = 0; all_theta = 0; theta = 0; centers = 0;
 train = csvread('train.csv');
 if debug == 0
 	disp('Using real dataset')
-	[ mytrain cv mytest ] = makedata(train, .6, .2, .2, true);
+	[ mytrain cv mytest ] = makedata(train, .8, .1, .1, true);
 else
 	disp('Using debug dataset')
 	[ mytrain cv mytest ] = makedata(train, .2, .1, .1, true);
@@ -40,7 +40,7 @@ if debug_sol == 0
 	unknown = 0;
 else
 	disp('Using debug test set')
-	test = mytest;
+	test = mytest(1:1000,:);
 end
 
 [m n] = size(test);
@@ -77,10 +77,6 @@ if (logistic && kmeans && do_train)
 	csvwrite([num2str(lambda) '.full.theta.logistic.csv'],all_theta)
 end
 
-theta
-all_theta
-c = size(theta)
-c = size(all_theta)
 makesolution(test, theta, all_theta, centers, classifiers, map, only_logistic, kmeans, logistic)
 
 
@@ -88,3 +84,5 @@ makesolution(test, theta, all_theta, centers, classifiers, map, only_logistic, k
 %tune a accuracy for the clusters
 %tune lambda
 %tune epsilon
+%Return percentages instead of prediction
+%use log reg after each k
