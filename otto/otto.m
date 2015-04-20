@@ -9,16 +9,16 @@ kmeans = 1
 logistic = 1
 only_logistic = 1
 
-do_train = 1
-read_log_in = 0
-read_k_in = 0
+do_train = 0
+read_log_in = 1
+read_k_in = 1
 
 %Tunable params
 lambda = 1
-epsilon = .9
+epsilon = .75
 k_iters = 500
 log_iters = 500
-min_clusters = 50
+min_clusters = 9
 
 %constants
 classifiers = 9;
