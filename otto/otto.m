@@ -9,16 +9,16 @@ kmeans = 1
 logistic = 1
 only_logistic = 1
 
-do_train = 0
-read_log_in = 1
-read_k_in = 1
+do_train = 1
+read_log_in = 0
+read_k_in = 0
 
 %Tunable params
-lambda = 1
-epsilon = .75
-k_iters = 500
-log_iters = 500
-min_clusters = 9
+lambda = 0
+epsilon = .6
+k_iters = 1000
+log_iters = 1000
+min_clusters = 23
 
 %constants
 classifiers = 9;
@@ -29,6 +29,7 @@ map = 0; all_theta = 0; theta = 0; centers = 0;
 
 %Read data in 
 train = csvread('train.csv');
+train = train(2:end,:); % remove header
 if debug == 0
 	disp('Using real dataset')
 	[ mytrain cv mytest ] = makedata(train, .8, .1, .1, true);
@@ -44,6 +45,7 @@ end
 if debug_sol == 0
 	disp('Using real test set')
 	test = csvread('test.csv');
+	test = test(2:end,:) % remove header
 	unknown = 0;
 else
 	disp('Using debug test set')
@@ -77,7 +79,7 @@ if (logistic && kmeans && do_train)
 	all_theta = zeros(size(mytrain(:,2:end-1),2)+1,size(centers,1)* classifiers);
 	for i=1:size(centers,1) %Run a sepperate regression against each cluster
 		this_theta = ((i-1)*classifiers+1):(i*classifiers);
-		[ all_theta(:,this_theta) predict_train predict_cv predict_test ] = ...
+		[ all_theta(:,this_theta) l_predict_train l_predict_cv l_predict_test ] = ...
 			all_logistic(mytrain(predict_train == i,:), cv(predict_cv == i, :), mytest(predict_test == i,:), lambda, log_iters, map, classifiers, 'full');
 	end
 	csvwrite([num2str(lambda) '.full.theta.logistic.csv'],all_theta)
