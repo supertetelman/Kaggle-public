@@ -45,7 +45,7 @@ end
 if debug_sol == 0
 	disp('Using real test set')
 	test = csvread('test.csv');
-	test = test(2:end,:) % remove header
+	test = test(2:end,:); % remove header
 	unknown = 0;
 else
 	disp('Using debug test set')
