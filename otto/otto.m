@@ -9,25 +9,29 @@ kmeans = 1
 logistic = 1
 only_logistic = 1
 
+predict = 0
 do_train = 1
-read_log_in = 0
-read_k_in = 0
+read_log_in = 1
+read_k_in = 1
 
 %Tunable params
 lambda = .1
 epsilon = .1
 k_iters = 1000
 log_iters = 1000
-min_clusters = 3
+min_clusters = 9
 
 %constants
 classifiers = 9;
 ksize = min_clusters
 
+
+
 %Initialize things so they are not null depending on debug/training
 map = 0; all_theta = 0; theta = 0; centers = 0;
 
 %Read data in 
+disp('Reading in training data.')
 train = csvread('train.csv');
 train = train(2:end,:); % remove header
 if debug == 0
@@ -55,11 +59,13 @@ end
 [m n] = size(test);
 
 if  (read_log_in && ~do_train)
+	disp('Reading in simple/full theta values.')
 	theta = csvread([num2str(lambda) '.simple.theta.logistic.csv']);
 	all_theta = csvread([num2str(lambda) '.full.theta.logistic.csv']);
 end
 
 if (read_k_in && ~do_train)
+	disp('Reading in centers/kmeans map.')
 	centers = csvread([num2str(ksize)  '.centers.kmeans.csv']);
 	map = csvread([num2str(ksize)  '.map.kmeans.csv']);
 end
@@ -85,8 +91,13 @@ if (logistic && kmeans && do_train)
 	csvwrite([num2str(lambda) '.full.theta.logistic.csv'],all_theta)
 end
 
-makesolution(test, theta, all_theta, centers, classifiers, map, only_logistic, kmeans, logistic)
-
+if predict
+	disp('Analyzing test data and predict 1 correct value.')
+	makesolution(test, theta, all_theta, centers, classifiers, map, only_logistic, kmeans, logistic)
+else
+	disp('Analyzing test data with % estimates.')
+	makesolution2(test, theta, all_theta, centers, classifiers, map, only_logistic, kmeans, logistic)
+end
 
 %TODO:
 %tune a accuracy for the clusters

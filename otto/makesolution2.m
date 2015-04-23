@@ -26,8 +26,8 @@ for row=1:rows
 m=1;
 
 if only_logistic
-	solution = log_predict(theta,[1 test(row,2:end)], classifiers);
-	dlmwrite('solution.results.logistic.csv', [test(row,1) (solution == 1:classifiers) ],'-append')
+	solution = log_predict_sol(theta,[1 test(row,2:end)], classifiers);
+	dlmwrite('solution.results.logistic.csv', [test(row,1) solution ],'-append')
 end
 if  kmeans
 	[ accuracy predict mapped ] = assess_kmeans(test(row,2:end), -1, centers, map);
@@ -37,11 +37,11 @@ if (logistic && kmeans)
 	for j=1:size(centers,1) %Run a sepperate regression against each cluster
 		if predict == j
 			this_theta = ((j-1)*classifiers+1):(j*classifiers);
-			solution = log_predict( all_theta(:,this_theta),[1 test(row,2:end)], classifiers);
+			solution = log_predict_sol( all_theta(:,this_theta),[1 test(row,2:end)], classifiers);
 			break
 		end
 	end
-	dlmwrite([num2str(length(centers)) '.solution.results.kmeans.and.logisitic.csv'],[ test(row,1) (solution == 1:classifiers) ], '-append')
+	dlmwrite([num2str(length(centers)) '.solution.results.kmeans.and.logisitic.csv'],[ test(row,1) solution], '-append')
 end
 
 end
