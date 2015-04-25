@@ -15,11 +15,11 @@ read_log_in = 1
 read_k_in = 1
 
 %Tunable params
-lambda = .1
+lambda = 1
 epsilon = .1
 k_iters = 1000
 log_iters = 1000
-min_clusters = 9
+min_clusters = 23
 
 %constants
 classifiers = 9;
@@ -36,7 +36,7 @@ train = csvread('train.csv');
 train = train(2:end,:); % remove header
 if debug == 0
 	disp('Using real dataset')
-	[ mytrain cv mytest ] = makedata(train, .8, .1, .1, true);
+	[ mytrain cv mytest ] = makedata(train, .99, .01, .01, true);
 else
 	disp('Using debug dataset')
 	[ mytrain cv mytest ] = makedata(train, .2, .1, .1, true);
