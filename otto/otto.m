@@ -34,6 +34,8 @@ map = 0; all_theta = 0; theta = 0; centers = 0;
 disp('Reading in training data.')
 train = csvread('train.csv');
 train = train(2:end,:); % remove header
+train = [train (train .^ 2)];
+
 if debug == 0
 	disp('Using real dataset')
 	[ mytrain cv mytest ] = makedata(train, .99, .01, .01, true);
@@ -45,6 +47,9 @@ else
 		cv=cv(1:100,:);
 		mytest=mytest(1:100,:);
 	end
+	k_iters = 10
+	min_clusters = 5
+	log_iters = 10
 end
 if debug_sol == 0
 	disp('Using real test set')

@@ -3,16 +3,17 @@ function [ theta predict_train predict_cv predict_test ] = all_logistic(mytrain,
 [ theta predict ]  =  runlogistic(mytrain, cv, mytest, lambda, map, classifiers, log_iters);
 
 [m n] = size(mytrain);
-predict_train = log_predict(theta,[ones(m,1) mytrain(:,2:end-1)], classifiers);
-train_accuracy = sum(predict_train == mytrain(:,end))/m;
+predict_train = log_predict_sol(theta,[ones(m,1) mytrain(:,2:end-1)], classifiers);
+train_accuracy = ((sum(sum(mytrain(:,end) .* log(predict_train))))/(classifiers * m) * -1);
 
 [m n] = size(cv);
-predict_cv = log_predict(theta,[ones(m,1) cv(:,2:end-1)], classifiers);
-cv_accuracy = sum(predict_cv == cv(:,end))/m;
+predict_cv = log_predict_sol(theta,[ones(m,1) cv(:,2:end-1)], classifiers);
+cv_accuracy = ((sum(sum(cv(:,end) .* log(predict_cv))))/(classifiers * m) * -1);
 
 [m n] = size(mytest);
-predict_test = log_predict(theta,[ones(m,1) mytest(:,2:end-1)], classifiers);
-test_accuracy = sum(predict_test == mytest(:,end))/m;
+predict_test = log_predict_sol(theta,[ones(m,1) mytest(:,2:end-1)], classifiers); %Pad this with 1s for x0
+test_accuracy = ((sum(sum(mytest(:,end) .* log(predict_test))))/(classifiers * m) * -1);
+a = mytest(:,end) .* log(predict_test)
 
 disp(['TRAIN RESULTS: Logistic regrestion found an accuracy of ' num2str(train_accuracy) ' percent'])
 disp(['CV RESULTS: Logistic regrestion found an accuracy of ' num2str(cv_accuracy) ' percent'])
