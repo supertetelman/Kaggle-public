@@ -2,12 +2,13 @@
 pkg load statistics
 
 %Debug
-debug = 0
-debug_sol = 0
+debug = 1
+debug_sol = 1
 debug_read_sol = 0
 kmeans = 1
 logistic = 1
 only_logistic = 1
+features = 0
 
 predict = 0
 do_train = 1
@@ -15,7 +16,7 @@ read_log_in = 1
 read_k_in = 1
 
 %Tunable params
-lambda = 1
+lambda = 10
 epsilon = .1
 k_iters = 1000
 log_iters = 1000
@@ -34,8 +35,10 @@ map = 0; all_theta = 0; theta = 0; centers = 0;
 disp('Reading in training data.')
 train = csvread('train.csv');
 train = train(2:end,:); % remove header
-train = [train (train .^ 2)];
 
+if features == 1
+	train = [train(:,1:end-1) (train(:,2:end-1) .^ 2) train(:,end)]; %Add features, without doubling the id/y
+end
 if debug == 0
 	disp('Using real dataset')
 	[ mytrain cv mytest ] = makedata(train, .99, .01, .01, true);
@@ -58,9 +61,11 @@ if debug_sol == 0
 	unknown = 0;
 else
 	disp('Using debug test set')
-	test = mytest;
+	test = mytest(:,1:end-1);
 end
-
+if features == 1
+	test = [test(:,1:end) (test(:,2:end) .^ 2)];
+end
 [m n] = size(test);
 
 if  (read_log_in && ~do_train)
