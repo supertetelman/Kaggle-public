@@ -2,31 +2,29 @@
 pkg load statistics
 
 %Debug
-debug = 1
-debug_sol = 1
-debug_read_sol = 0
-kmeans = 1
-logistic = 1
-only_logistic = 1
-features = 0
+debug = 0
+debug_sol = 0 %use debug solution
+debug_read_sol = 0 %read in previous params
+kmeans = 1 %use kmeans
+logistic = 1 %use logistic regression post kmeans
+only_logistic = 1 %use logistic regression pre kmeans
+features = 0 %modify the features
 
-predict = 0
-do_train = 1
-read_log_in = 1
-read_k_in = 1
+predict = 0 %make a prediction 1/0 for classifiers
+do_train = 1 %do training
+read_log_in = 0  %read in values
+read_k_in = 0 %read in values
 
 %Tunable params
-lambda = 10
+lambda = 1
 epsilon = .1
 k_iters = 1000
 log_iters = 1000
-min_clusters = 23
+min_clusters = 50 
 
 %constants
 classifiers = 9;
 ksize = min_clusters
-
-
 
 %Initialize things so they are not null depending on debug/training
 map = 0; all_theta = 0; theta = 0; centers = 0;
@@ -37,11 +35,14 @@ train = csvread('train.csv');
 train = train(2:end,:); % remove header
 
 if features == 1
-	train = [train(:,1:end-1) (train(:,2:end-1) .^ 2) train(:,end)]; %Add features, without doubling the id/y
+	train_square =  (train(:,2:end-1) .^ 2)
+	train_log = log(train(:,2:end-1))
+	train = [train(:,1:end-1) train_square train_log train(:,end)]; %Add features, without doubling the id/y
 end
+
 if debug == 0
 	disp('Using real dataset')
-	[ mytrain cv mytest ] = makedata(train, .99, .01, .01, true);
+	[ mytrain cv mytest ] = makedata(train, .999, .001, .001, true);
 else
 	disp('Using debug dataset')
 	[ mytrain cv mytest ] = makedata(train, .2, .1, .1, true);
@@ -109,9 +110,3 @@ else
 	makesolution2(test, theta, all_theta, centers, classifiers, map, only_logistic, kmeans, logistic)
 end
 
-%TODO:
-%tune a accuracy for the clusters
-%tune lambda
-%tune epsilon
-%Return percentages instead of prediction
-%use log reg after each k
