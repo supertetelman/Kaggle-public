@@ -16,11 +16,11 @@ read_log_in = 0  %read in values
 read_k_in = 0 %read in values
 
 %Tunable params
-lambda = 1
+lambda = 10
 epsilon = .1
 k_iters = 1000
 log_iters = 1000
-min_clusters = 50 
+min_clusters = 20 
 
 %constants
 classifiers = 9;
